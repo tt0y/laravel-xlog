@@ -1,0 +1,49 @@
+{
+  "name": "tt0y/laravel-xlog",
+  "description": "Structured JSON logging for Laravel: correlation and request ids, HTTP and user context, model logging",
+  "type": "library",
+  "license": "MIT",
+  "keywords": ["laravel", "logging", "structured-logging", "monolog", "json-logs", "correlation-id"],
+  "authors": [
+    {
+      "name": "Anton KC",
+      "email": "ajusmith@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^11.0 || ^12.0",
+    "illuminate/console": "^11.0 || ^12.0",
+    "illuminate/database": "^11.0 || ^12.0",
+    "illuminate/http": "^11.0 || ^12.0",
+    "illuminate/log": "^11.0 || ^12.0",
+    "monolog/monolog": "^3.0",
+    "symfony/uid": "^6.4 || ^7.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.0 || ^10.0",
+    "phpunit/phpunit": "^11.0 || ^12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tt0y\\XLog\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tt0y\\XLog\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Tt0y\\XLog\\XLogServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
