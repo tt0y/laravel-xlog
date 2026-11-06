@@ -6,6 +6,8 @@ namespace Tt0y\XLog\Tests\Unit\User;
 
 use Tt0y\XLog\Tests\TestCase;
 use Tt0y\XLog\User\AuthUserResolver;
+use Illuminate\Auth\GenericUser;
+use Illuminate\Auth\RequestGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
@@ -244,5 +246,39 @@ final class AuthUserResolverTest extends TestCase
 
         $this->assertSame($user, $resolvedUser);
         $this->assertSame('api', $guardName);
+    }
+
+    #[Test]
+    public function resolves_user_from_request_guard_without_get_user(): void
+    {
+        Auth::viaRequest('xlog-token', static fn(): null => null);
+        config()->set('auth.guards.token', ['driver' => 'xlog-token']);
+        config()->set('xlog.user.guards', ['token', 'web']);
+        $user = new GenericUser(['id' => 7]);
+        Auth::guard('token')->setUser($user);
+
+        [$resolvedUser, $guardName] = (new AuthUserResolver())->resolveUser();
+
+        $this->assertInstanceOf(RequestGuard::class, Auth::guard('token'));
+        $this->assertSame($user, $resolvedUser);
+        $this->assertSame('token', $guardName);
+    }
+
+    #[Test]
+    public function request_guard_without_user_is_not_asked_to_authenticate(): void
+    {
+        $callbackRuns = 0;
+        Auth::viaRequest('xlog-token', static function () use (&$callbackRuns): null {
+            $callbackRuns++;
+
+            return null;
+        });
+        config()->set('auth.guards.token', ['driver' => 'xlog-token']);
+        config()->set('xlog.user.guards', ['token']);
+
+        [$resolvedUser] = (new AuthUserResolver())->resolveUser();
+
+        $this->assertNull($resolvedUser);
+        $this->assertSame(0, $callbackRuns);
     }
 }
