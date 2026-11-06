@@ -43,15 +43,13 @@ final class AuthUserResolver
         foreach ($this->getGuards() as $guardName) {
             $guard = Auth::guard($guardName);
 
-            if (!method_exists($guard, 'hasUser') || !method_exists($guard, 'getUser')) {
+            if (!method_exists($guard, 'hasUser') || !$guard->hasUser()) {
                 continue;
             }
 
-            if (!$guard->hasUser()) {
-                continue;
-            }
-
-            $user = $guard->getUser();
+            // Only SessionGuard has getUser(); RequestGuard (Sanctum, Passport, viaRequest) does not.
+            // After hasUser() is true, user() returns the already resolved user and authenticates nothing.
+            $user = method_exists($guard, 'getUser') ? $guard->getUser() : $guard->user();
 
             if ($user instanceof Authenticatable) {
                 $this->cachedResult = [$user, $guardName];
