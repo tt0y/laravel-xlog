@@ -14,7 +14,7 @@ Unified structured logging package for Laravel applications with automatic conte
 ## Requirements
 
 - PHP 8.3+
-- Laravel 11 or 12
+- Laravel 11, 12 or 13
 - symfony/uid ^6.4 || ^7.0
 
 ## Installation
